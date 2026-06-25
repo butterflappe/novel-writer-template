@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novel Writer Templates</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', 'Noto Sans Thai', sans-serif;
+    background: #f7f5f2;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    min-height: 100vh;
+    background: #1a1a2e;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 100;
+  }
+
+  .sidebar-title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0 20px 20px;
+    border-bottom: 1px solid #2d2d4e;
+    opacity: 0.7;
+  }
+
+  .nav-group {
+    padding: 16px 0 0;
+  }
+
+  .nav-group-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #6b6b99;
+    padding: 0 20px 8px;
+  }
+
+  .nav-btn {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    color: #b0aec8;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+
+  .nav-btn:hover { background: #252542; color: #fff; }
+  .nav-btn.active {
+    background: #1f1f3d;
+    color: #fff;
+    border-left-color: #e94560;
+  }
+
+  .nav-btn .icon { font-size: 16px; width: 20px; text-align: center; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 20px;
+    border-top: 1px solid #2d2d4e;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-export {
+    background: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+  .btn-export:hover { background: #c73652; }
+
+  .btn-clear {
+    background: none;
+    color: #6b6b99;
+    border: 1px solid #2d2d4e;
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-clear:hover { color: #e94560; border-color: #e94560; }
+
+  /* MAIN */
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 40px 48px;
+    max-width: 900px;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e0dbd4;
+  }
+
+  .page-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+    color: #888;
+  }
+
+  /* CARDS */
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e5e0d8;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #e94560;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* FORM */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+
+  .field-row.single { grid-template-columns: 1fr; }
+  .field-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+
+  .field input[type="text"],
+  .field textarea,
+  .field select {
+    width: 100%;
+    background: #faf9f7;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 9px 12px;
+    font-size: 14px;
+    color: #1a1a1a;
+    font-family: inherit;
+    transition: border 0.15s;
+    resize: vertical;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    outline: none;
+    border-color: #e94560;
+    background: #fff;
+  }
+
+  .field textarea { min-height: 80px; }
+  .field textarea.tall { min-height: 120px; }
+
+  .tag-input-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: #faf9f7;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px 8px;
+    min-height: 42px;
+    cursor: text;
+    align-items: center;
+  }
+
+  .tag-input-wrap:focus-within { border-color: #e94560; background: #fff; }
+
+  .tag {
+    background: #1a1a2e;
+    color: #fff;
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .tag-del {
+    cursor: pointer;
+    opacity: 0.6;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .tag-del:hover { opacity: 1; }
+
+  .tag-input-wrap input {
+    border: none;
+    background: none;
+    outline: none;
+    font-size: 13px;
+    min-width: 80px;
+    flex: 1;
+    font-family: inherit;
+  }
+
+  /* METER */
+  .arc-meter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .arc-meter input[type="range"] {
+    flex: 1;
+    accent-color: #e94560;
+  }
+
+  .arc-label {
+    font-size: 12px;
+    color: #888;
+    min-width: 90px;
+    text-align: right;
+  }
+
+  /* RELATIONSHIP MAP (simple) */
+  .rel-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .rel-row select, .rel-row input {
+    flex: 1;
+    background: #faf9f7;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: inherit;
+  }
+
+  .rel-arrow {
+    color: #aaa;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .btn-add-row {
+    background: none;
+    border: 1px dashed #ccc;
+    border-radius: 6px;
+    color: #999;
+    font-size: 13px;
+    padding: 8px 16px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.15s;
+    margin-top: 6px;
+  }
+  .btn-add-row:hover { border-color: #e94560; color: #e94560; }
+
+  .btn-remove {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0 4px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .btn-remove:hover { color: #e94560; }
+
+  /* PLOT BOARD */
+  .plot-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .plot-col-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #aaa;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .plot-card {
+    background: #fff;
+    border: 1px solid #e5e0d8;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .plot-card-header {
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .act1-h { background: #fdf0f3; color: #c73652; }
+  .act2-h { background: #f0f0ff; color: #4040c0; }
+  .act3-h { background: #f0fdf4; color: #2d7a4f; }
+
+  .plot-card textarea {
+    width: 100%;
+    border: none;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    resize: none;
+    background: transparent;
+    min-height: 100px;
+    color: #1a1a1a;
+  }
+  .plot-card textarea:focus { outline: none; }
+
+  /* CHAPTER LIST */
+  .chapter-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0ece6;
+  }
+  .chapter-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: #e94560;
+    min-width: 28px;
+  }
+  .chapter-item input {
+    flex: 1;
+    border: none;
+    background: none;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1a1a1a;
+  }
+  .chapter-item input:focus { outline: none; border-bottom: 1px solid #e94560; }
+  .chapter-item select {
+    background: #f7f5f2;
+    border: 1px solid #e0dbd4;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: inherit;
+    color: #555;
+  }
+
+  /* WORLD */
+  .world-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* TONE TAGS */
+  .tone-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tone-tag {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #fff;
+    color: #555;
+    user-select: none;
+  }
+  .tone-tag.selected {
+    background: #1a1a2e;
+    color: #fff;
+    border-color: #1a1a2e;
+  }
+
+  /* SCENE CONFLICT TYPE */
+  .conflict-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .cpill {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #fff;
+    color: #555;
+  }
+  .cpill.sel { background: #e94560; color: #fff; border-color: #e94560; }
+
+  /* SAVE STATUS */
+  .save-status {
+    font-size: 11px;
+    color: #6b6b99;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  /* SECTION DIVIDER */
+  .section-sep {
+    height: 1px;
+    background: #f0ece6;
+    margin: 20px 0;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .sidebar { width: 60px; }
+    .sidebar-title, .nav-group-label, .nav-btn span { display: none; }
+    .main { margin-left: 60px; padding: 24px 20px; }
+    .field-row { grid-template-columns: 1fr; }
+    .plot-board { grid-template-columns: 1fr; }
+    .world-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-title">Novel Writer</div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">เนื้อเรื่อง</div>
+    <button class="nav-btn active" onclick="switchPage('story')" id="btn-story">
+      <span class="icon">📖</span><span>ภาพรวมเรื่อง</span>
+    </button>
+    <button class="nav-btn" onclick="switchPage('plot')" id="btn-plot">
+      <span class="icon">🗺️</span><span>โครงเรื่อง</span>
+    </button>
+    <button class="nav-btn" onclick="switchPage('chapters')" id="btn-chapters">
+      <span class="icon">📋</span><span>ลำดับบท</span>
+    </button>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">ตัวละคร</div>
+    <button class="nav-btn" onclick="switchPage('character')" id="btn-character">
+      <span class="icon">👤</span><span>ตัวละคร</span>
+    </button>
+    <button class="nav-btn" onclick="switchPage('relations')" id="btn-relations">
+      <span class="icon">🔗</span><span>ความสัมพันธ์</span>
+    </button>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">ฉาก & โลก</div>
+    <button class="nav-btn" onclick="switchPage('scene')" id="btn-scene">
+      <span class="icon">🎬</span><span>ฉาก</span>
+    </button>
+    <button class="nav-btn" onclick="switchPage('world')" id="btn-world">
+      <span class="icon">🌐</span><span>โลกของเรื่อง</span>
+    </button>
+  </div>
+
+  <div class="sidebar-footer">
+    <button class="btn-export" onclick="exportAll()">⬇ Export .txt</button>
+    <button class="btn-clear" onclick="clearAll()">ล้างทั้งหมด</button>
+    <div class="save-status" id="save-status">บันทึกอัตโนมัติ ✓</div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ───── PAGE: STORY OVERVIEW ───── -->
+  <div class="page active" id="page-story">
+    <div class="page-header">
+      <div class="page-title">📖 ภาพรวมเรื่อง</div>
+      <div class="page-subtitle">ข้อมูลพื้นฐานของนิยาย</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📌 ข้อมูลพื้นฐาน</div>
+      <div class="field-row">
+        <div class="field"><label>ชื่อเรื่อง</label><input type="text" id="s_title" placeholder="ชื่อนิยาย"></div>
+        <div class="field"><label>แนวเรื่อง</label><input type="text" id="s_genre" placeholder="เช่น Thriller, Romance, Fantasy"></div>
+      </div>
+      <div class="field-row triple">
+        <div class="field"><label>กลุ่มเป้าหมาย</label><input type="text" id="s_audience" placeholder="เช่น YA, ผู้ใหญ่"></div>
+        <div class="field"><label>ยุคสมัย</label><input type="text" id="s_era" placeholder="เช่น ปัจจุบัน, โบราณ"></div>
+        <div class="field"><label>จำนวนบทที่วางแผน</label><input type="text" id="s_chapters" placeholder="เช่น 20 บท"></div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>ย่อเรื่อง (Logline)</label><textarea id="s_logline" placeholder="สรุปเรื่องใน 1-2 ประโยค: ใคร ต้องการอะไร ขัดแย้งกับอะไร"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎯 แก่นเรื่อง</div>
+      <div class="field-row">
+        <div class="field"><label>Theme หลัก</label><input type="text" id="s_theme" placeholder="เช่น การไว้วางใจ, การสูญเสียตัวตน"></div>
+        <div class="field"><label>คำถามหลักของเรื่อง</label><input type="text" id="s_question" placeholder="เช่น ตัวละครจะเลือกอะไรเมื่อทุกอย่างพังทลาย?"></div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>สาร (Message) ที่ต้องการสื่อ</label><textarea id="s_message" placeholder="สิ่งที่ผู้อ่านควรรู้สึกหรือคิดหลังอ่านจบ"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📐 โครงสร้างหลัก</div>
+      <div class="field-row single">
+        <div class="field"><label>จุดเริ่มต้น (Inciting Incident)</label><textarea id="s_inciting" placeholder="เหตุการณ์ที่เปลี่ยนชีวิตตัวเอก ทำให้เรื่องเริ่มต้น"></textarea></div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>จุดสูงสุด (Climax)</label><textarea id="s_climax" placeholder="การเผชิญหน้าหรือการตัดสินใจครั้งสำคัญที่สุด"></textarea></div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>บทสรุป (Resolution)</label><textarea id="s_resolution" placeholder="ผลลัพธ์หลังจาก Climax ชีวิตตัวละครเปลี่ยนไปอย่างไร"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎨 โทนและบรรยากาศ</div>
+      <div class="field-row single">
+        <div class="field">
+          <label>เลือกโทนของเรื่อง (เลือกได้หลายอย่าง)</label>
+          <div class="tone-picker" id="tone-picker">
+            <span class="tone-tag" onclick="toggleTone(this)">มืดหม่น</span>
+            <span class="tone-tag" onclick="toggleTone(this)">ตึงเครียด</span>
+            <span class="tone-tag" onclick="toggleTone(this)">โรแมนติก</span>
+            <span class="tone-tag" onclick="toggleTone(this)">ตลก</span>
+            <span class="tone-tag" onclick="toggleTone(this)">แอคชัน</span>
+            <span class="tone-tag" onclick="toggleTone(this)">เศร้า</span>
+            <span class="tone-tag" onclick="toggleTone(this)">ลึกลับ</span>
+            <span class="tone-tag" onclick="toggleTone(this)">สยองขวัญ</span>
+            <span class="tone-tag" onclick="toggleTone(this)">อบอุ่น</span>
+            <span class="tone-tag" onclick="toggleTone(this)">ดราม่า</span>
+            <span class="tone-tag" onclick="toggleTone(this)">Bittersweet</span>
+            <span class="tone-tag" onclick="toggleTone(this)">Whimsical</span>
+          </div>
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>บรรยากาศที่ต้องการ</label><textarea id="s_mood" placeholder="อธิบายความรู้สึกที่ผู้อ่านควรได้รับตลอดทั้งเรื่อง"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── PAGE: PLOT ───── -->
+  <div class="page" id="page-plot">
+    <div class="page-header">
+      <div class="page-title">🗺️ โครงเรื่อง (3-Act Structure)</div>
+      <div class="page-subtitle">วางโครงเนื้อหาแต่ละ Act</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 Plot Board</div>
+      <div class="plot-board">
+        <div>
+          <div class="plot-col-title">Act 1 — ต้นเรื่อง</div>
+          <div class="plot-card">
+            <div class="plot-card-header act1-h">การเปิดเรื่อง</div>
+            <textarea id="p_open" placeholder="แนะนำโลก ตัวละคร สถานะก่อนเรื่องเริ่ม..."></textarea>
+          </div>
+          <div class="plot-card" style="margin-top:10px">
+            <div class="plot-card-header act1-h">Inciting Incident</div>
+            <textarea id="p_incite" placeholder="เหตุการณ์ที่เปลี่ยนทุกอย่าง..."></textarea>
+          </div>
+        </div>
+        <div>
+          <div class="plot-col-title">Act 2 — ดำเนินเรื่อง</div>
+          <div class="plot-card">
+            <div class="plot-card-header act2-h">Rising Action</div>
+            <textarea id="p_rising" placeholder="ความขัดแย้งเพิ่มขึ้น อุปสรรคซ้อนอุปสรรค..."></textarea>
+          </div>
+          <div class="plot-card" style="margin-top:10px">
+            <div class="plot-card-header act2-h">Midpoint Twist</div>
+            <textarea id="p_mid" placeholder="จุดพลิกกลางเรื่อง เปลี่ยนทิศทาง..."></textarea>
+          </div>
+        </div>
+        <div>
+          <div class="plot-col-title">Act 3 — ปลายเรื่อง</div>
+          <div class="plot-card">
+            <div class="plot-card-header act3-h">Climax</div>
+            <textarea id="p_climax" placeholder="การเผชิญหน้าครั้งสุดท้าย..."></textarea>
+          </div>
+          <div class="plot-card" style="margin-top:10px">
+            <div class="plot-card-header act3-h">Resolution</div>
+            <textarea id="p_resolve" placeholder="บทสรุป ชีวิตหลังจากนั้น..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ Subplots</div>
+      <div id="subplot-list"></div>
+      <button class="btn-add-row" onclick="addSubplot()">+ เพิ่ม Subplot</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔑 Plot Twists / Reveals</div>
+      <div id="twist-list"></div>
+      <button class="btn-add-row" onclick="addTwist()">+ เพิ่ม Twist</button>
+    </div>
+  </div>
+
+  <!-- ───── PAGE: CHAPTERS ───── -->
+  <div class="page" id="page-chapters">
+    <div class="page-header">
+      <div class="page-title">📋 ลำดับบท</div>
+      <div class="page-subtitle">วางแผนเนื้อหาแต่ละบท</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📑 รายการบท</div>
+      <div id="chapter-list"></div>
+      <button class="btn-add-row" onclick="addChapter()">+ เพิ่มบท</button>
+    </div>
+  </div>
+
+  <!-- ───── PAGE: CHARACTER ───── -->
+  <div class="page" id="page-character">
+    <div class="page-header">
+      <div class="page-title">👤 เบื้องหลังตัวละคร</div>
+      <div class="page-subtitle">
+        <select id="char-selector" onchange="switchChar()" style="border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-family:inherit;font-size:14px;background:#fff;cursor:pointer">
+          <option value="0">ตัวละครที่ 1</option>
+        </select>
+        <button onclick="addCharacter()" style="margin-left:10px;background:#1a1a2e;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer">+ เพิ่มตัวละคร</button>
+        <button onclick="removeCurrentChar()" style="margin-left:6px;background:none;color:#e94560;border:1px solid #e94560;border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer">ลบ</button>
+      </div>
+    </div>
+
+    <div id="char-form">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+
+  <!-- ───── PAGE: RELATIONS ───── -->
+  <div class="page" id="page-relations">
+    <div class="page-header">
+      <div class="page-title">🔗 ความสัมพันธ์ระหว่างตัวละคร</div>
+      <div class="page-subtitle">ระบุว่าตัวละครแต่ละคู่มีความสัมพันธ์อย่างไร</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💬 แผนที่ความสัมพันธ์</div>
+      <div id="rel-list"></div>
+      <button class="btn-add-row" onclick="addRelation()">+ เพิ่มความสัมพันธ์</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 หมายเหตุภาพรวม</div>
+      <div class="field-row single">
+        <div class="field">
+          <textarea id="rel_notes" class="tall" placeholder="บันทึกเพิ่มเติมเกี่ยวกับพลวัตของกลุ่มตัวละคร ความขัดแย้งที่ซ่อนอยู่ ฯลฯ"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───── PAGE: SCENE ───── -->
+  <div class="page" id="page-scene">
+    <div class="page-header">
+      <div class="page-title">🎬 วางแผนฉาก</div>
+      <div class="page-subtitle">
+        <select id="scene-selector" onchange="switchScene()" style="border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-family:inherit;font-size:14px;background:#fff;cursor:pointer">
+          <option value="0">ฉากที่ 1</option>
+        </select>
+        <button onclick="addScene()" style="margin-left:10px;background:#1a1a2e;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer">+ เพิ่มฉาก</button>
+        <button onclick="removeCurrentScene()" style="margin-left:6px;background:none;color:#e94560;border:1px solid #e94560;border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer">ลบ</button>
+      </div>
+    </div>
+
+    <div id="scene-form">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+
+  <!-- ───── PAGE: WORLD ───── -->
+  <div class="page" id="page-world">
+    <div class="page-header">
+      <div class="page-title">🌐 โลกของเรื่อง (World Building)</div>
+      <div class="page-subtitle">สร้างโลกให้มีความสมจริงและสม่ำเสมอ</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🏙️ ภูมิศาสตร์และสถานที่</div>
+      <div class="world-grid">
+        <div class="field"><label>ยุคสมัย / ช่วงเวลา</label><input type="text" id="w_era" placeholder="เช่น ยุคปัจจุบัน, 2070"></div>
+        <div class="field"><label>ประเทศ / ภูมิภาค</label><input type="text" id="w_location" placeholder="เช่น ญี่ปุ่น, โลกสมมติ"></div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>สถานที่สำคัญในเรื่อง</label><textarea id="w_places" placeholder="ระบุสถานที่และความสำคัญ เช่น ✦ บ้านของคัตสึยะ — ที่ซ่อนความลับ..."></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚙️ กฎของโลก</div>
+      <div class="field-row single">
+        <div class="field"><label>กฎพิเศษ / ระบบ Magic / Supernatural</label><textarea id="w_rules" placeholder="อธิบายกฎที่โลกนี้ต้องปฏิบัติตาม สิ่งที่เป็นไปได้ / ไม่ได้..."></textarea></div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>ข้อจำกัด / ราคาที่ต้องจ่าย</label><textarea id="w_limits" placeholder="ถ้ามีพลังวิเศษหรือกฎพิเศษ — มีข้อจำกัดหรือผลกระทบอะไร?"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🏛️ สังคมและวัฒนธรรม</div>
+      <div class="world-grid">
+        <div class="field"><label>โครงสร้างสังคม</label><textarea id="w_social" placeholder="ชนชั้น อำนาจ กฎหมาย..."></textarea></div>
+        <div class="field"><label>วัฒนธรรม / ความเชื่อ</label><textarea id="w_culture" placeholder="ธรรมเนียม ความเชื่อ ศาสนา..."></textarea></div>
+        <div class="field"><label>เทคโนโลยี / ระดับความก้าวหน้า</label><textarea id="w_tech" placeholder="ระดับเทค สิ่งที่มี / ไม่มี..."></textarea></div>
+        <div class="field"><label>องค์กรสำคัญ</label><textarea id="w_orgs" placeholder="รัฐบาล บริษัท กลุ่มลับ ฯลฯ..."></textarea></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📚 Lore / ประวัติศาสตร์เบื้องหลัง</div>
+      <div class="field-row single">
+        <div class="field"><label>เหตุการณ์ในอดีตที่กำหนดโลกปัจจุบัน</label><textarea id="w_history" class="tall" placeholder="ประวัติศาสตร์ที่ผู้อ่านต้องรู้ เหตุการณ์ที่ส่งผลมาถึงปัจจุบัน..."></textarea></div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>ความลับที่ยังไม่เปิดเผย (ไว้สำหรับนักเขียนเท่านั้น)</label><textarea id="w_secrets" class="tall" placeholder="สิ่งที่ผู้อ่านยังไม่รู้ แต่นักเขียนต้องรู้ไว้เพื่อความสม่ำเสมอ..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ─── STATE ───────────────────────────────────────────
+const state = {
+  characters: [createChar()],
+  currentChar: 0,
+  scenes: [createScene()],
+  currentScene: 0,
+  chapters: [],
+  relations: [],
+  subplots: [],
+  twists: [],
+};
+
+function createChar() {
+  return {
+    name:'', nickname:'', age:'', gender:'', role:'protagonist',
+    appearance:'', personality:'', background:'', motivation:'',
+    fear:'', goal:'', flaw:'', strength:'',
+    arc_start:'', arc_end:'', arc_val:30,
+    keywords:[], secrets:'', notes:''
+  };
+}
+
+function createScene() {
+  return {
+    title:'', chapter:'', location:'', time:'', pov:'',
+    goal:'', conflict_type:'internal', conflict:'',
+    turning:'', ending:'', hook:'', tone:'',
+    chars:[], notes:''
+  };
+}
+
+// ─── NAVIGATION ──────────────────────────────────────
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.getElementById('btn-'+id).classList.add('active');
+}
+
+// ─── TONE PICKER ─────────────────────────────────────
+function toggleTone(el) {
+  el.classList.toggle('selected');
+  schedSave();
+}
+
+// ─── CHAPTERS ────────────────────────────────────────
+function addChapter() {
+  state.chapters.push({ title:'', status:'planning', goal:'', notes:'' });
+  renderChapters();
+  schedSave();
+}
+
+function renderChapters() {
+  const list = document.getElementById('chapter-list');
+  list.innerHTML = '';
+  state.chapters.forEach((ch, i) => {
+    const row = document.createElement('div');
+    row.className = 'chapter-item';
+    row.innerHTML = `
+      <span class="chapter-num">บท ${i+1}</span>
+      <input type="text" placeholder="ชื่อบท / เหตุการณ์หลัก" value="${ch.title}"
+        onchange="state.chapters[${i}].title=this.value;schedSave()">
+      <select onchange="state.chapters[${i}].status=this.value;schedSave()">
+        <option value="planning" ${ch.status==='planning'?'selected':''}>วางแผน</option>
+        <option value="drafting" ${ch.status==='drafting'?'selected':''}>กำลังเขียน</option>
+        <option value="done" ${ch.status==='done'?'selected':''}>เสร็จแล้ว</option>
+        <option value="revision" ${ch.status==='revision'?'selected':''}>แก้ไข</option>
+      </select>
+      <button class="btn-remove" onclick="removeChapter(${i})">×</button>
+    `;
+    list.appendChild(row);
+  });
+  if (state.chapters.length === 0) {
+    list.innerHTML = '<p style="color:#aaa;font-size:13px;padding:10px 0">ยังไม่มีบท — กด + เพิ่มบท</p>';
+  }
+}
+
+function removeChapter(i) {
+  state.chapters.splice(i, 1);
+  renderChapters();
+  schedSave();
+}
+
+// ─── SUBPLOTS ─────────────────────────────────────────
+function addSubplot() {
+  state.subplots.push({ title:'', description:'' });
+  renderSubplots();
+  schedSave();
+}
+
+function renderSubplots() {
+  const list = document.getElementById('subplot-list');
+  list.innerHTML = '';
+  state.subplots.forEach((sp, i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;gap:10px;margin-bottom:12px;align-items:start';
+    div.innerHTML = `
+      <div style="flex:0 0 140px">
+        <input type="text" style="width:100%;background:#faf9f7;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit"
+          placeholder="ชื่อ Subplot" value="${sp.title}" onchange="state.subplots[${i}].title=this.value;schedSave()">
+      </div>
+      <textarea style="flex:1;background:#faf9f7;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit;resize:vertical;min-height:60px"
+        placeholder="รายละเอียด..." onchange="state.subplots[${i}].description=this.value;schedSave()">${sp.description}</textarea>
+      <button class="btn-remove" onclick="removeSubplot(${i})">×</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function removeSubplot(i) { state.subplots.splice(i,1); renderSubplots(); schedSave(); }
+
+// ─── TWISTS ───────────────────────────────────────────
+function addTwist() {
+  state.twists.push({ when:'', twist:'' });
+  renderTwists();
+  schedSave();
+}
+
+function renderTwists() {
+  const list = document.getElementById('twist-list');
+  list.innerHTML = '';
+  state.twists.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;gap:10px;margin-bottom:10px;align-items:center';
+    div.innerHTML = `
+      <input type="text" style="flex:0 0 110px;background:#faf9f7;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit"
+        placeholder="บทที่..." value="${t.when}" onchange="state.twists[${i}].when=this.value;schedSave()">
+      <input type="text" style="flex:1;background:#faf9f7;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit"
+        placeholder="Twist / เปิดเผยอะไร..." value="${t.twist}" onchange="state.twists[${i}].twist=this.value;schedSave()">
+      <button class="btn-remove" onclick="removeTwist(${i})">×</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function removeTwist(i) { state.twists.splice(i,1); renderTwists(); schedSave(); }
+
+// ─── CHARACTER ────────────────────────────────────────
+function addCharacter() {
+  state.characters.push(createChar());
+  updateCharSelector();
+  switchChar(state.characters.length - 1);
+}
+
+function removeCurrentChar() {
+  if (state.characters.length <= 1) { alert('ต้องมีตัวละครอย่างน้อย 1 คน'); return; }
+  state.characters.splice(state.currentChar, 1);
+  state.currentChar = Math.max(0, state.currentChar - 1);
+  updateCharSelector();
+  renderCharForm();
+  schedSave();
+}
+
+function updateCharSelector() {
+  const sel = document.getElementById('char-selector');
+  sel.innerHTML = state.characters.map((c,i) =>
+    `<option value="${i}" ${i===state.currentChar?'selected':''}>${c.name || 'ตัวละครที่ '+(i+1)}</option>`
+  ).join('');
+}
+
+function switchChar(idx) {
+  if (idx !== undefined) state.currentChar = parseInt(idx);
+  else state.currentChar = parseInt(document.getElementById('char-selector').value);
+  renderCharForm();
+}
+
+function renderCharForm() {
+  const c = state.characters[state.currentChar];
+  const ci = state.currentChar;
+  document.getElementById('char-form').innerHTML = `
+    <div class="card">
+      <div class="card-title">🪪 ข้อมูลพื้นฐาน</div>
+      <div class="field-row triple">
+        <div class="field"><label>ชื่อ</label><input type="text" value="${c.name}" placeholder="ชื่อตัวละคร" oninput="updateChar(${ci},'name',this.value)"></div>
+        <div class="field"><label>ชื่อเล่น / ฉายา</label><input type="text" value="${c.nickname}" placeholder="ชื่อเล่น" oninput="updateChar(${ci},'nickname',this.value)"></div>
+        <div class="field"><label>อายุ</label><input type="text" value="${c.age}" placeholder="อายุ" oninput="updateChar(${ci},'age',this.value)"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>เพศ</label><input type="text" value="${c.gender}" placeholder="เพศ" oninput="updateChar(${ci},'gender',this.value)"></div>
+        <div class="field"><label>บทบาทในเรื่อง</label>
+          <select onchange="updateChar(${ci},'role',this.value)">
+            <option value="protagonist" ${c.role==='protagonist'?'selected':''}>ตัวเอก (Protagonist)</option>
+            <option value="antagonist" ${c.role==='antagonist'?'selected':''}>ปฏิปักษ์ (Antagonist)</option>
+            <option value="supporting" ${c.role==='supporting'?'selected':''}>ตัวละครสมทบ</option>
+            <option value="mentor" ${c.role==='mentor'?'selected':''}>พี่เลี้ยง / Mentor</option>
+            <option value="love" ${c.role==='love'?'selected':''}>ตัวละครรัก</option>
+            <option value="other" ${c.role==='other'?'selected':''}>อื่นๆ</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>ลักษณะภายนอก</label>
+          <textarea placeholder="รูปร่าง หน้าตา เสื้อผ้า สิ่งที่โดดเด่น..." oninput="updateChar(${ci},'appearance',this.value)">${c.appearance}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🧠 บุคลิกและจิตวิทยา</div>
+      <div class="field-row single">
+        <div class="field"><label>บุคลิกภาพ</label>
+          <textarea placeholder="พฤติกรรม นิสัย วิธีพูด วิธีคิด..." oninput="updateChar(${ci},'personality',this.value)">${c.personality}</textarea>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>จุดแข็ง</label>
+          <textarea placeholder="สิ่งที่ตัวละครทำได้ดี มีในตัว..." oninput="updateChar(${ci},'strength',this.value)">${c.strength}</textarea>
+        </div>
+        <div class="field"><label>จุดอ่อน / Flaw</label>
+          <textarea placeholder="ข้อบกพร่อง ความผิดพลาดซ้ำๆ..." oninput="updateChar(${ci},'flaw',this.value)">${c.flaw}</textarea>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>ความกลัวที่ลึกที่สุด</label>
+          <textarea placeholder="สิ่งที่กลัวและพยายามหนี..." oninput="updateChar(${ci},'fear',this.value)">${c.fear}</textarea>
+        </div>
+        <div class="field"><label>สิ่งที่ต้องการที่แท้จริง</label>
+          <textarea placeholder="ไม่ใช่แค่เป้าหมาย แต่ความต้องการลึกๆ..." oninput="updateChar(${ci},'goal',this.value)">${c.goal}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📜 ประวัติและแรงจูงใจ</div>
+      <div class="field-row single">
+        <div class="field"><label>ประวัติย่อ (Backstory)</label>
+          <textarea class="tall" placeholder="ชีวิตก่อนเรื่องจะเริ่ม เหตุการณ์ที่หล่อหลอมตัวละคร..." oninput="updateChar(${ci},'background',this.value)">${c.background}</textarea>
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>แรงจูงใจหลัก (Motivation)</label>
+          <textarea placeholder="ทำไมตัวละครถึงทำสิ่งที่ทำ?" oninput="updateChar(${ci},'motivation',this.value)">${c.motivation}</textarea>
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>ความลับที่ซ่อนไว้</label>
+          <textarea placeholder="สิ่งที่ตัวละครไม่บอกใคร..." oninput="updateChar(${ci},'secrets',this.value)">${c.secrets}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📈 Character Arc</div>
+      <div class="field-row">
+        <div class="field"><label>ตัวละครเริ่มต้นเป็นอย่างไร</label>
+          <textarea placeholder="สภาพ / ความเชื่อ / ทัศนคติตอนต้นเรื่อง..." oninput="updateChar(${ci},'arc_start',this.value)">${c.arc_start}</textarea>
+        </div>
+        <div class="field"><label>ตัวละครเปลี่ยนเป็นอย่างไรตอนจบ</label>
+          <textarea placeholder="สิ่งที่เรียนรู้ / เปลี่ยนแปลง / สูญเสีย..." oninput="updateChar(${ci},'arc_end',this.value)">${c.arc_end}</textarea>
+        </div>
+      </div>
+      <div class="field">
+        <label>ระดับ Arc (Positive → Negative)</label>
+        <div class="arc-meter">
+          <span style="font-size:12px;color:#2d7a4f">Positive</span>
+          <input type="range" min="0" max="100" value="${c.arc_val}"
+            oninput="updateChar(${ci},'arc_val',parseInt(this.value));document.getElementById('arc-lbl-${ci}').textContent=arcLabel(this.value)">
+          <span style="font-size:12px;color:#c73652">Negative</span>
+          <span class="arc-label" id="arc-lbl-${ci}">${arcLabel(c.arc_val)}</span>
+        </div>
+      </div>
+      <div class="field-row single" style="margin-top:14px">
+        <div class="field"><label>หมายเหตุเพิ่มเติม</label>
+          <textarea placeholder="ข้อมูลอื่นๆ ที่สำคัญ..." oninput="updateChar(${ci},'notes',this.value)">${c.notes}</textarea>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function arcLabel(v) {
+  v = parseInt(v);
+  if (v < 20) return 'Growth Arc';
+  if (v < 40) return 'Transformation';
+  if (v < 60) return 'Flat Arc';
+  if (v < 80) return 'Corruption Arc';
+  return 'Tragic Arc';
+}
+
+function updateChar(i, key, val) {
+  state.characters[i][key] = val;
+  if (key === 'name') updateCharSelector();
+  schedSave();
+}
+
+// ─── RELATIONS ────────────────────────────────────────
+function addRelation() {
+  state.relations.push({ from:'', type:'', to:'', desc:'' });
+  renderRelations();
+  schedSave();
+}
+
+function renderRelations() {
+  const list = document.getElementById('rel-list');
+  list.innerHTML = '';
+  state.relations.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'rel-row';
+    div.innerHTML = `
+      <input type="text" placeholder="ตัวละคร A" value="${r.from}"
+        onchange="state.relations[${i}].from=this.value;schedSave()" style="flex:1;background:#faf9f7;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit">
+      <select onchange="state.relations[${i}].type=this.value;schedSave()" style="flex:0 0 130px;background:#faf9f7;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit">
+        <option value="ally" ${r.type==='ally'?'selected':''}>🤝 พันธมิตร</option>
+        <option value="rival" ${r.type==='rival'?'selected':''}>⚔️ คู่อริ</option>
+        <option value="love" ${r.type==='love'?'selected':''}>❤️ ความรัก</option>
+        <option value="family" ${r.type==='family'?'selected':''}>👨‍👩‍👧 ครอบครัว</option>
+        <option value="mentor" ${r.type==='mentor'?'selected':''}>🧑‍🏫 พี่เลี้ยง</option>
+        <option value="enemy" ${r.type==='enemy'?'selected':''}>💀 ศัตรู</option>
+        <option value="unknown" ${r.type==='unknown'?'selected':''}>❓ ไม่ระบุ</option>
+      </select>
+      <span class="rel-arrow">→</span>
+      <input type="text" placeholder="ตัวละคร B" value="${r.to}"
+        onchange="state.relations[${i}].to=this.value;schedSave()" style="flex:1;background:#faf9f7;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit">
+      <input type="text" placeholder="รายละเอียด / ความซับซ้อน" value="${r.desc}"
+        onchange="state.relations[${i}].desc=this.value;schedSave()" style="flex:2;background:#faf9f7;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit">
+      <button class="btn-remove" onclick="removeRelation(${i})">×</button>
+    `;
+    list.appendChild(div);
+  });
+  if (state.relations.length === 0) {
+    list.innerHTML = '<p style="color:#aaa;font-size:13px;padding:10px 0">ยังไม่มีข้อมูล — กด + เพิ่มความสัมพันธ์</p>';
+  }
+}
+
+function removeRelation(i) { state.relations.splice(i,1); renderRelations(); schedSave(); }
+
+// ─── SCENE ───────────────────────────────────────────
+function addScene() {
+  state.scenes.push(createScene());
+  updateSceneSelector();
+  switchScene(state.scenes.length - 1);
+}
+
+function removeCurrentScene() {
+  if (state.scenes.length <= 1) { alert('ต้องมีฉากอย่างน้อย 1 ฉาก'); return; }
+  state.scenes.splice(state.currentScene, 1);
+  state.currentScene = Math.max(0, state.currentScene - 1);
+  updateSceneSelector();
+  renderSceneForm();
+  schedSave();
+}
+
+function updateSceneSelector() {
+  const sel = document.getElementById('scene-selector');
+  sel.innerHTML = state.scenes.map((sc,i) =>
+    `<option value="${i}" ${i===state.currentScene?'selected':''}>${sc.title || 'ฉากที่ '+(i+1)}</option>`
+  ).join('');
+}
+
+function switchScene(idx) {
+  if (idx !== undefined) state.currentScene = parseInt(idx);
+  else state.currentScene = parseInt(document.getElementById('scene-selector').value);
+  renderSceneForm();
+}
+
+function renderSceneForm() {
+  const s = state.scenes[state.currentScene];
+  const si = state.currentScene;
+  document.getElementById('scene-form').innerHTML = `
+    <div class="card">
+      <div class="card-title">📍 ข้อมูลฉาก</div>
+      <div class="field-row">
+        <div class="field"><label>ชื่อฉาก</label><input type="text" value="${s.title}" placeholder="ชื่อฉาก / ชื่อย่อ" oninput="updateScene(${si},'title',this.value)"></div>
+        <div class="field"><label>อยู่ในบทที่</label><input type="text" value="${s.chapter}" placeholder="เช่น บทที่ 3" oninput="updateScene(${si},'chapter',this.value)"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>สถานที่</label><input type="text" value="${s.location}" placeholder="ที่ไหน" oninput="updateScene(${si},'location',this.value)"></div>
+        <div class="field"><label>เวลา / บรรยากาศ</label><input type="text" value="${s.time}" placeholder="เช่น กลางคืน ฝนตก" oninput="updateScene(${si},'time',this.value)"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>มุมมอง (POV)</label><input type="text" value="${s.pov}" placeholder="มองผ่านสายตาใคร" oninput="updateScene(${si},'pov',this.value)"></div>
+        <div class="field"><label>โทนอารมณ์</label><input type="text" value="${s.tone}" placeholder="เช่น ตึงเครียด เศร้า" oninput="updateScene(${si},'tone',this.value)"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ ความขัดแย้ง</div>
+      <div class="field-row single">
+        <div class="field">
+          <label>ประเภท Conflict</label>
+          <div class="conflict-pills" style="margin-top:6px">
+            ${['internal','external','interpersonal','societal','supernatural'].map(t => `
+              <span class="cpill ${s.conflict_type===t?'sel':''}" onclick="updateScene(${si},'conflict_type','${t}');this.parentNode.querySelectorAll('.cpill').forEach(x=>x.classList.remove('sel'));this.classList.add('sel')">
+                ${{internal:'จิตใจ',external:'สภาพแวดล้อม',interpersonal:'คนอื่น',societal:'สังคม',supernatural:'เหนือธรรมชาติ'}[t]}
+              </span>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>ตัวละครในฉาก</label><input type="text" value="${s.chars.join(', ')}" placeholder="ชื่อตัวละคร คั่นด้วย , " oninput="updateScene(${si},'chars',this.value.split(',').map(x=>x.trim()))"></div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>เป้าหมายของฉาก (POV ต้องการอะไร?)</label>
+          <textarea placeholder="สิ่งที่ตัวละครหลักต้องการในฉากนี้..." oninput="updateScene(${si},'goal',this.value)">${s.goal}</textarea>
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>ความขัดแย้งในฉาก</label>
+          <textarea placeholder="อะไรขัดขวางเป้าหมายนั้น?" oninput="updateScene(${si},'conflict',this.value)">${s.conflict}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🎯 โครงสร้างฉาก</div>
+      <div class="field-row single">
+        <div class="field"><label>จุดพลิก (Turning Point)</label>
+          <textarea placeholder="อะไรเปลี่ยนไปกลางหรือปลายฉาก?" oninput="updateScene(${si},'turning',this.value)">${s.turning}</textarea>
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>ฉากจบอย่างไร / อะไรเปลี่ยน</label>
+          <textarea placeholder="สภาพหลังฉากจบ ตัวละครได้อะไร / สูญเสียอะไร..." oninput="updateScene(${si},'ending',this.value)">${s.ending}</textarea>
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>Hook ต่อไปยังฉากถัดไป</label>
+          <input type="text" value="${s.hook}" placeholder="คำถามหรือแรงดึงดูดที่ทำให้ผู้อ่านอยากอ่านต่อ" oninput="updateScene(${si},'hook',this.value)">
+        </div>
+      </div>
+      <div class="field-row single">
+        <div class="field"><label>หมายเหตุนักเขียน</label>
+          <textarea placeholder="สิ่งที่ต้องระวัง ข้อมูลพิเศษ..." oninput="updateScene(${si},'notes',this.value)">${s.notes}</textarea>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updateScene(i, key, val) {
+  state.scenes[i][key] = val;
+  if (key === 'title') updateSceneSelector();
+  schedSave();
+}
+
+// ─── AUTO-SAVE ────────────────────────────────────────
+let saveTimer = null;
+function schedSave() {
+  clearTimeout(saveTimer);
+  document.getElementById('save-status').textContent = 'กำลังบันทึก…';
+  saveTimer = setTimeout(saveAll, 800);
+}
+
+function saveAll() {
+  // collect simple fields
+  const simpleIds = [
+    's_title','s_genre','s_audience','s_era','s_chapters',
+    's_logline','s_theme','s_question','s_message',
+    's_inciting','s_climax','s_resolution','s_mood',
+    'p_open','p_incite','p_rising','p_mid','p_climax','p_resolve',
+    'rel_notes',
+    'w_era','w_location','w_places','w_rules','w_limits',
+    'w_social','w_culture','w_tech','w_orgs','w_history','w_secrets'
+  ];
+  const saved = { fields:{}, tones:[], state };
+  simpleIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) saved.fields[id] = el.value;
+  });
+  saved.tones = [...document.querySelectorAll('.tone-tag.selected')].map(t => t.textContent);
+
+  try {
+    localStorage.setItem('novel_writer_v1', JSON.stringify(saved));
+    document.getElementById('save-status').textContent = 'บันทึกอัตโนมัติ ✓';
+  } catch(e) {
+    document.getElementById('save-status').textContent = 'บันทึกไม่ได้';
+  }
+}
+
+function loadAll() {
+  try {
+    const raw = localStorage.getItem('novel_writer_v1');
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved.fields) {
+      Object.entries(saved.fields).forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+      });
+    }
+    if (saved.tones) {
+      document.querySelectorAll('.tone-tag').forEach(t => {
+        if (saved.tones.includes(t.textContent)) t.classList.add('selected');
+      });
+    }
+    if (saved.state) {
+      if (saved.state.characters?.length) state.characters = saved.state.characters;
+      if (saved.state.scenes?.length) state.scenes = saved.state.scenes;
+      if (saved.state.chapters) state.chapters = saved.state.chapters;
+      if (saved.state.relations) state.relations = saved.state.relations;
+      if (saved.state.subplots) state.subplots = saved.state.subplots;
+      if (saved.state.twists) state.twists = saved.state.twists;
+    }
+  } catch(e) {}
+}
+
+function clearAll() {
+  if (!confirm('ล้างข้อมูลทั้งหมด? ไม่สามารถย้อนกลับได้')) return;
+  localStorage.removeItem('novel_writer_v1');
+  location.reload();
+}
+
+// ─── EXPORT ──────────────────────────────────────────
+function exportAll() {
+  saveAll();
+  let out = '═══════════════════════════════\n';
+  out += '  NOVEL WRITER — EXPORT\n';
+  out += '═══════════════════════════════\n\n';
+
+  const gv = id => { const el=document.getElementById(id); return el?el.value:''; };
+
+  out += '── ภาพรวมเรื่อง ──\n';
+  out += `ชื่อเรื่อง: ${gv('s_title')}\n`;
+  out += `แนวเรื่อง: ${gv('s_genre')} | กลุ่มเป้าหมาย: ${gv('s_audience')}\n`;
+  out += `ยุคสมัย: ${gv('s_era')} | บท: ${gv('s_chapters')}\n`;
+  out += `Logline: ${gv('s_logline')}\n`;
+  out += `Theme: ${gv('s_theme')}\n`;
+  out += `คำถามหลัก: ${gv('s_question')}\n`;
+  out += `สาร: ${gv('s_message')}\n\n`;
+
+  out += '── โครงเรื่อง ──\n';
+  out += `Act1 Opening: ${gv('p_open')}\n`;
+  out += `Inciting Incident: ${gv('p_incite')}\n`;
+  out += `Rising Action: ${gv('p_rising')}\n`;
+  out += `Midpoint: ${gv('p_mid')}\n`;
+  out += `Climax: ${gv('p_climax')}\n`;
+  out += `Resolution: ${gv('p_resolve')}\n\n`;
+
+  if (state.subplots.length) {
+    out += 'Subplots:\n';
+    state.subplots.forEach((sp,i) => out += `  ${i+1}. ${sp.title}: ${sp.description}\n`);
+    out += '\n';
+  }
+
+  out += '── ตัวละคร ──\n';
+  state.characters.forEach((c,i) => {
+    out += `\n[ตัวละครที่ ${i+1}] ${c.name} (${c.nickname})\n`;
+    out += `อายุ: ${c.age} | เพศ: ${c.gender} | บทบาท: ${c.role}\n`;
+    out += `ลักษณะ: ${c.appearance}\n`;
+    out += `บุคลิก: ${c.personality}\n`;
+    out += `ประวัติ: ${c.background}\n`;
+    out += `แรงจูงใจ: ${c.motivation}\n`;
+    out += `ความกลัว: ${c.fear} | ความต้องการ: ${c.goal}\n`;
+    out += `จุดแข็ง: ${c.strength} | จุดอ่อน: ${c.flaw}\n`;
+    out += `ความลับ: ${c.secrets}\n`;
+    out += `Arc: ${c.arc_start} → ${c.arc_end}\n`;
+  });
+
+  out += '\n── ความสัมพันธ์ ──\n';
+  state.relations.forEach(r => out += `${r.from} [${r.type}] → ${r.to}: ${r.desc}\n`);
+
+  out += '\n── ฉาก ──\n';
+  state.scenes.forEach((s,i) => {
+    out += `\n[ฉากที่ ${i+1}] ${s.title}\n`;
+    out += `บทที่: ${s.chapter} | สถานที่: ${s.location} | เวลา: ${s.time}\n`;
+    out += `POV: ${s.pov} | โทน: ${s.tone}\n`;
+    out += `เป้าหมาย: ${s.goal}\n`;
+    out += `ความขัดแย้ง: ${s.conflict}\n`;
+    out += `Turning Point: ${s.turning}\n`;
+    out += `จบฉาก: ${s.ending}\n`;
+    out += `Hook: ${s.hook}\n`;
+  });
+
+  out += '\n── ลำดับบท ──\n';
+  state.chapters.forEach((ch,i) => out += `บทที่ ${i+1}: ${ch.title} [${ch.status}]\n`);
+
+  out += '\n── โลกของเรื่อง ──\n';
+  out += `ยุคสมัย: ${gv('w_era')} | สถานที่: ${gv('w_location')}\n`;
+  out += `กฎ: ${gv('w_rules')}\n`;
+  out += `ข้อจำกัด: ${gv('w_limits')}\n`;
+  out += `สังคม: ${gv('w_social')}\n`;
+  out += `ประวัติศาสตร์: ${gv('w_history')}\n`;
+
+  const blob = new Blob([out], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (gv('s_title') || 'novel') + '_template.txt';
+  a.click();
+}
+
+// ─── INIT ─────────────────────────────────────────────
+loadAll();
+updateCharSelector();
+renderCharForm();
+updateSceneSelector();
+renderSceneForm();
+renderChapters();
+renderRelations();
+renderSubplots();
+renderTwists();
+
+// wire up simple fields to autosave
+document.querySelectorAll('input[type="text"], textarea, select').forEach(el => {
+  if (!el.getAttribute('onchange') && !el.getAttribute('oninput') && !el.getAttribute('onchange')) {
+    el.addEventListener('input', schedSave);
+    el.addEventListener('change', schedSave);
+  }
+});
+</script>
+</body>
+</html>
